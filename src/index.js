@@ -1,5 +1,6 @@
 import Component from './base'
 import Dom from './dom'
+import render from './render'
 
 const dom = new Dom()
 
@@ -7,24 +8,24 @@ class Test extends Component {
   constructor () {
     super()
     this.state = {
-      msg: 'hello world'
+      msg: 'hello world',
+      count: 1
     }
   }
   handleClick () {
     this.setState({
-      msg: 'hello world new'
+      count: ++this.state.count
     })
   }
   render () {
-    const { msg } = this.state
+    const { msg, count } = this.state
     return dom.div({}, 
       dom.button({
         onclick: () => this.handleClick()
       }, 'click'),
-      msg
+      msg+count
     )
   }
 }
 
-const app = new Test().render()
-document.body.appendChild(app)
+render(Test, '#app')
