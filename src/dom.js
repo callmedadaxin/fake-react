@@ -37,7 +37,6 @@ export default class Dom {
         //   compileUtil.attr(_elem, _vm, _attrs[attr], attr.slice(1))
         // } else {
         if(attr.indexOf('on') === 0) {
-          console.log(attr)
           _elem[attr] = _attrs[attr]
         } else {
           _elem.setAttribute(attr, _attrs[attr])

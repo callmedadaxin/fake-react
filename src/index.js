@@ -4,6 +4,13 @@ import render from './render'
 
 const dom = new Dom()
 
+class Child extends Component {
+  render () {
+    const {count} = this.props
+    return dom.p({}, `count * count = ${count * count}`)
+  }
+}
+
 class Test extends Component {
   constructor () {
     super()
@@ -23,7 +30,8 @@ class Test extends Component {
       dom.button({
         onclick: () => this.handleClick()
       }, 'click'),
-      msg+count
+      msg+count,
+      new Child({ count }).render()
     )
   }
 }
