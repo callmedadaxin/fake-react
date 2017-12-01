@@ -4,8 +4,9 @@ export default function (App, targetName) {
   let old = app.render()
   app.isRoot = true
   app.update = (newDom) => {
-    target.innerHTML = ''
-    target.appendChild(newDom)
+    target.insertBefore(newDom, old)
+    target.removeChild(old)
+    old = newDom
   }
   target.appendChild(old)
 }
