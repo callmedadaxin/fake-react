@@ -1,5 +1,5 @@
 import Component from './base'
-import Dom from './dom'
+import Dom from './vdom'
 import render from './render'
 
 const dom = new Dom()
