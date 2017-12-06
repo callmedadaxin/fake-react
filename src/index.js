@@ -26,7 +26,9 @@ class Test extends Component {
   }
   render () {
     const { msg, count } = this.state
-    return dom.div({}, 
+    return dom.div({
+      class: `${200 + count}px`
+    }, 
       dom.button({
         onclick: () => this.handleClick()
       }, 'click'),

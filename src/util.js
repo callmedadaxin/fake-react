@@ -39,3 +39,45 @@ export const foreach = (obj, fn) => {
     }
   }
 }
+
+export const compareArray = (arr, newArray) => {
+  if (arr.length !== newArray.length) {
+    return false
+  }
+  return arr.every((item, index) => item === newArray[index])
+}
+
+export const compareObject = (obj, newObj) => {
+  const ret = {
+    isSame: true,
+    patches: {}
+  }
+  foreach(obj, (item, key) => {
+    const newObjItem = newObj[key]
+
+    if (isObject(item)) {
+      const r = compareObject(item, newObjItem)
+      if (!r.isSame) {
+        ret.isSame = false
+        ret.patches[key] = newObjItem
+        return false
+      }
+    }
+
+    if (Array.isArray(item)) {
+      const same = compareArray(item, newObjItem)
+      if (!same) {
+        ret.isSame = false
+        ret.patches[key] = newObjItem
+        return false
+      }
+    }
+
+    if (item !== newObjItem) {
+      ret.isSame = false
+      ret.patches[key] = newObjItem
+      return false
+    }
+  })
+  return ret
+}
