@@ -9,6 +9,16 @@ export default class Dom {
 
   _getDom(target, tagName) {
     return (props = {}, ...childrens) => {
+      childrens = childrens.map(item => {
+        if (typeof(item) === 'string') {
+          return {
+            tagName: 'text',
+            props: {},
+            children: [item]
+          }
+        }
+        return item
+      })
       return {
         tagName,
         props,

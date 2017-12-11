@@ -6,6 +6,8 @@ export const isObject = obj => {
   return Object.prototype.toString.call(obj) === "[object Object]"
 }
 
+export const isText = obj => typeof obj === 'string'
+
 export const isFunction = obj => {
   return typeof obj === 'function'
 }

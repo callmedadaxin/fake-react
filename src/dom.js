@@ -9,6 +9,9 @@ export default class Dom {
 
   _getDom (target, tagName) {
     return (attrs = {}, ...childrens) => {
+      if (tagName === 'text') {
+        return document.createTextNode(childrens)
+      }
       this._elem = document.createElement(tagName)
       this._attrs = attrs
       this._childrens = childrens
@@ -60,11 +63,9 @@ export default class Dom {
    */
   _addChildrens () {
     const { _childrens, _elem, _vm } = this
-    
     _childrens.forEach(children => {
       const type = typeof children
       let child
-
       switch (type) {
         case 'string':
           child = document.createTextNode(children)
