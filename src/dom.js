@@ -1,5 +1,5 @@
 import { hasProperty, toKebabCase, isObject, isFunction, isString } from './util.js'
-
+import { updater } from './updater'
 export default class Dom {
   constructor () {
     return new Proxy({}, {
@@ -31,20 +31,12 @@ export default class Dom {
 
     for (let attr in _attrs) {
       if (hasProperty(_attrs, attr)) {
-        // // 事件绑定
-        // if (attr.indexOf('@') === 0) {
-        //   this._bindEvents(attr)
-        // } else if (attr.indexOf('$') === 0) {
-        //   this._bindDirectives(attr, _elem)
-        // } else if (attr.indexOf(':') === 0) {
-        //   compileUtil.attr(_elem, _vm, _attrs[attr], attr.slice(1))
-        // } else {
+        // 绑定事件
         if(attr.indexOf('on') === 0) {
           _elem[attr] = _attrs[attr]
         } else {
-          _elem.setAttribute(attr, _attrs[attr])
+          updater.attr(_elem, attr, _attrs[attr])
         }
-        // }
       }
     }
   }
