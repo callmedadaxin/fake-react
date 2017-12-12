@@ -27,13 +27,18 @@ class Test extends Component {
   render () {
     const { msg, count } = this.state
     return dom.div({
-      class: `${200 + count}px`
+      class: `${200 + count}px`,
+      style: {
+        color: 'red',
+        fontSize: 10 + count + 'px'
+      }
     }, 
       dom.button({
         onclick: () => this.handleClick()
       }, 'click'),
       msg+count,
-      new Child({ count }).render()
+      new Child({ count }).render(),
+      new Child({ count: count * 2 }).render()
     )
   }
 }

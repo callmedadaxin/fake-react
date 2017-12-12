@@ -1,5 +1,6 @@
 import Dom from './dom'
 import { compareObject, foreach, isText, isFunction } from './util'
+import { updater } from './updater'
 const dom = new Dom()
 
 /**
@@ -72,14 +73,10 @@ function patch(node, patcheList, count = {index: 0}) {
       switch (patch.type) {
         case PROPS:
           foreach(patch.props, (content, key) => {
-            if (!content) {
-              node.removeAttribute(key)
-            } else {
-              if (isFunction(content)) {
-                return true
-              }
-              node.setAttribute(key, content)
+            if (isFunction(content)) {
+              return true
             }
+            updater.attr(node, key, content)
           })
           break
         case TEXT:
@@ -112,7 +109,6 @@ export default function (App, targetName) {
   app.update = (newConfig) => {
     // 计算差异
     const patches = diff(old, newConfig)
-    console.log(old, patches)
     patch(oldDom, patches)
   }
   target.appendChild(oldDom)

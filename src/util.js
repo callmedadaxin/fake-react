@@ -1,3 +1,4 @@
+export const isNull = obj => !obj && obj !== 0
 export const hasProperty = (obj, prop) => {
   return Object.prototype.hasOwnProperty.call(obj, prop)
 }
@@ -56,13 +57,12 @@ export const compareObject = (obj, newObj) => {
   }
   foreach(obj, (item, key) => {
     const newObjItem = newObj[key]
-
     if (isObject(item)) {
       const r = compareObject(item, newObjItem)
       if (!r.isSame) {
         ret.isSame = false
         ret.patches[key] = newObjItem
-        return false
+        return
       }
     }
 
@@ -71,14 +71,14 @@ export const compareObject = (obj, newObj) => {
       if (!same) {
         ret.isSame = false
         ret.patches[key] = newObjItem
-        return false
+        return
       }
     }
 
     if (item !== newObjItem) {
       ret.isSame = false
       ret.patches[key] = newObjItem
-      return false
+      return
     }
   })
   return ret
