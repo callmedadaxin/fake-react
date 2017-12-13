@@ -5,7 +5,6 @@ export const updater = {
     node.textContent = value
   },
   attr (node, key, value) {
-    console.log(updater, key)
     // 处理style等特殊模式
     if (updater[key]) {
       return updater[key](node, value)

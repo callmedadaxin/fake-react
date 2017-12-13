@@ -16,7 +16,8 @@ class Test extends Component {
     super()
     this.state = {
       msg: 'hello world',
-      count: 1
+      count: 1,
+      showContent: false
     }
   }
   handleClick () {
@@ -24,8 +25,13 @@ class Test extends Component {
       count: ++this.state.count
     })
   }
+  addDom () {
+    this.setState({
+      showContent: !this.state.showContent
+    })
+  }
   render () {
-    const { msg, count } = this.state
+    const { msg, count, showContent } = this.state
     return dom.div({
       class: `${200 + count}px`,
       style: {
@@ -36,9 +42,12 @@ class Test extends Component {
       dom.button({
         onclick: () => this.handleClick()
       }, 'click'),
+      dom.button({
+        onclick: () => this.addDom()
+      }, '点我展示节点'),
       msg+count,
       new Child({ count }).render(),
-      new Child({ count: count * 2 }).render()
+      showContent ? new Child({ count: count * 2 }).render() : 'ssss'
     )
   }
 }

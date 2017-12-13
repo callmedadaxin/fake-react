@@ -18,47 +18,52 @@ function rendom(vdom) {
 }
 
 const PROPS = Symbol('PROPS')
+const REPLACE = Symbol('REPLACE')
 const TEXT = Symbol('TEXT')
 const isTextNode = obj => obj.tagName === 'text'
 /**
  * 比较两虚拟dom的差异
  * 差异类型 REPLACE, MODIFIED, PROPS, TEXT
  */
-function diff(oldVDom, newVDom, patches = [], index = 0) {
+function diff(oldVDom, newVDom, patches = [], count = {index: 0}) {
+  const index = count.index
   patches[index] = patches[index] || []
-  if (isText(oldVDom)) {
-    if (isText(newVDom)) {
-      if (oldVDom !== newVDom) {
-        patches[index].push({
-          type: TEXT,
-          text: newVDom
-        })
-        return
-      }
+  if (isText(oldVDom) && isText(newVDom)) {
+    // TEXT
+    if (oldVDom !== newVDom) {
+      patches[index].push({
+        type: TEXT,
+        text: newVDom
+      })
     }
-    return
-  }
-
-  // 处理props差异
-  const propsSame = compareObject(oldVDom.props, newVDom.props)
-  if (!propsSame.isSame) {
-    patches[index].push({
-      type: PROPS,
-      props: propsSame.patches
-    })
-  }
-  if (oldVDom.tagName !== 'text') {
-    diffChildren(oldVDom.children, newVDom.children, patches, index)
+  } else if (oldVDom.tagName === newVDom.tagName) {
+    // 处理props差异
+    const propsSame = compareObject(oldVDom.props, newVDom.props)
+    if (!propsSame.isSame) {
+      patches[index].push({
+        type: PROPS,
+        props: propsSame.patches
+      })
+    }
+    if (oldVDom.tagName !== 'text') {
+      diffChildren(oldVDom.children, newVDom.children, patches, count)
+    } else {
+      diff(oldVDom.children[0], newVDom.children[0], patches, count)
+    }
   } else {
-    diff(oldVDom.children[0], newVDom.children[0], patches, ++index)
+    patches[index].push({
+      type: REPLACE,
+      target: newVDom
+    })
   }
   return patches
 }
 
-function diffChildren(oldChildren, newChildren, patches, index) {
+function diffChildren(oldChildren, newChildren, patches, count) {
   if (oldChildren && oldChildren.length) {
     oldChildren.forEach((children, i) => {
-      diff(children, newChildren[i], patches, ++index)
+      count.index += 1
+      diff(children, newChildren[i], patches, count)
     })
   }
 }
@@ -68,6 +73,7 @@ function diffChildren(oldChildren, newChildren, patches, index) {
  */
 function patch(node, patcheList, count = {index: 0}) {
   const patches = patcheList[count.index]
+  const parentNode = node.parentNode
   if (patches) {
     patches.forEach(patch => {
       switch (patch.type) {
@@ -82,6 +88,9 @@ function patch(node, patcheList, count = {index: 0}) {
         case TEXT:
           node.textContent = patch.text
           break
+        case REPLACE:
+          parentNode.insertBefore(rendom(patch.target), node)
+          parentNode.removeChild(node)
         default:
           break
       }
@@ -107,9 +116,12 @@ export default function (App, targetName) {
   
   app.isRoot = true
   app.update = (newConfig) => {
+    console.log(old, newConfig)
     // 计算差异
     const patches = diff(old, newConfig)
+    console.log(patches)
     patch(oldDom, patches)
+    old = newConfig
   }
   target.appendChild(oldDom)
 }
