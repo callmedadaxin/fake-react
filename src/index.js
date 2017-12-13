@@ -47,7 +47,7 @@ class Test extends Component {
       }, '点我展示节点'),
       msg+count,
       new Child({ count }).render(),
-      showContent ? new Child({ count: count * 2 }).render() : 'ssss'
+      showContent ? new Child({ count: count * 2 }).render() : ''
     )
   }
 }

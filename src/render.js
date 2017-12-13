@@ -45,11 +45,7 @@ function diff(oldVDom, newVDom, patches = [], count = {index: 0}) {
         props: propsSame.patches
       })
     }
-    if (oldVDom.tagName !== 'text') {
-      diffChildren(oldVDom.children, newVDom.children, patches, count)
-    } else {
-      diff(oldVDom.children[0], newVDom.children[0], patches, count)
-    }
+    diffChildren(oldVDom, newVDom, patches, count)
   } else {
     patches[index].push({
       type: REPLACE,
@@ -59,12 +55,16 @@ function diff(oldVDom, newVDom, patches = [], count = {index: 0}) {
   return patches
 }
 
-function diffChildren(oldChildren, newChildren, patches, count) {
-  if (oldChildren && oldChildren.length) {
-    oldChildren.forEach((children, i) => {
-      count.index += 1
-      diff(children, newChildren[i], patches, count)
-    })
+function diffChildren(oldVDom, newVDom, patches, count) {
+  if (oldVDom.tagName === 'text') {
+    diff(oldVDom.children[0], newVDom.children[0], patches, count)
+  } else {
+    if (oldVDom.children && oldVDom.children.length) {
+      oldVDom.children.forEach((children, i) => {
+        count.index += 1
+        diff(children, newVDom.children[i], patches, count)
+      })
+    }
   }
 }
 
