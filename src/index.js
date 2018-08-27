@@ -1,55 +1,73 @@
-import Component from './base'
-import Dom from './vdom'
-import render from './render'
 
-const dom = new Dom()
+import React, { Component } from './v4/react'
+import ReactDom from './v4/react-dom'
 
-class Child extends Component {
-  render () {
-    const {count} = this.props
-    return dom.p({}, `count * count = ${count * count}`)
-  }
-}
-
-class Test extends Component {
-  constructor () {
-    super()
+// 简单组件
+class Title extends Component {
+  constructor (props) {
+    super(props)
     this.state = {
-      msg: 'hello world',
-      count: 1,
-      showContent: false
+      count: 1
     }
   }
-  handleClick () {
-    this.setState({
-      count: ++this.state.count
-    })
+  componentWillMount () {
+    console.log('title will mount')
   }
-  addDom () {
-    this.setState({
-      showContent: !this.state.showContent
-    })
+  componentDidMount () {
+    console.log('title did mount')
+    setInterval(() => {
+      this.setState({
+        count: this.state.count + 1
+      })
+    }, 1000)
+    setInterval(() => {
+      this.setState({
+        count: this.state.count + 1
+      })
+    }, 1000)
   }
   render () {
-    const { msg, count, showContent } = this.state
-    return dom.div({
-      class: `${200 + count}px`,
-      style: {
-        color: 'red',
-        fontSize: 10 + count + 'px'
-      }
-    }, 
-      dom.button({
-        onclick: () => this.handleClick()
-      }, 'click'),
-      dom.button({
-        onclick: () => this.addDom()
-      }, '点我展示节点'),
-      msg+count,
-      new Child({ count }).render(),
-      showContent ? new Child({ count: count * 2 }).render() : ''
+    return React.createElement(
+      'h1',
+      null,
+      `${this.props.msg}-${this.state.count}`
     )
   }
 }
 
-render(Test, '#app')
+// 复合组件
+class App extends Component {
+  componentWillMount () {
+    console.log('app will mount')
+  }
+  componentDidMount () {
+    console.log('app did mount')
+  }
+  render () {
+    const { asTitle, msg } = this.props
+
+    return asTitle
+      ? React.createElement(Title, {
+        msg
+      })
+      : React.createElement('p', null, msg)
+  }
+}
+
+ReactDom.render(
+  React.createElement(App, {
+    msg: 'hello world',
+    asTitle: true
+  }),
+  document.querySelector('body')
+)
+
+setTimeout(() => {
+  ReactDom.render(
+    React.createElement(App, {
+      msg: 'hello world again',
+      asTitle: true
+    }),
+    document.querySelector('body')
+  )
+}, 2000);
